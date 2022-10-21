@@ -21,15 +21,14 @@ const translateRemainHMS = (remainTimeMs: number, passZero = false) => {
 const getUseTime = (startTime: string, endTime: string, parsed = true, passZero = false): string | number => {
 	const todayYMD = dayjs().format('YYYY-MM-DD')
 	const YMD = startTime < endTime ? todayYMD : dayjs().add(1, 'day').format('YYYY-MM-DD')
-	const useTimeMs = new Date(`${YMD} ${endTime}`).getTime() - new Date(`${todayYMD} ${startTime}`).getTime()
-
+	const useTimeMs = dayjs(`${YMD} ${endTime}`).valueOf() - dayjs(`${todayYMD} ${startTime}`).valueOf()
 	if (parsed) return translateRemainHMS(useTimeMs, passZero)
 	return useTimeMs
 }
 
 const getRemainTime = (startTime: string, endTime: string, parsed = true, passZero = false): string | number => {
 	const YMD = (startTime < endTime || startTime > dayjs().format('HH:mm') ? dayjs() : dayjs().add(1, 'day')).format('YYYY-MM-DD')
-	const remainTimeMs = new Date(`${YMD} ${endTime}`).getTime() - Date.now()
+	const remainTimeMs = dayjs(`${YMD} ${endTime}`).valueOf() - Date.now()
 
 	if (parsed) return translateRemainHMS(remainTimeMs, passZero)
 	return remainTimeMs
