@@ -1,35 +1,22 @@
 import { Collapse } from '@arco-design/web-react'
 import { Dispatch, FC, SetStateAction, useMemo } from 'react'
 import { TransData } from '../types'
-import dayjs from 'dayjs'
+import { Dayjs } from 'dayjs'
+import { getRemainTimeString } from '../lib/data-helper'
 
 type Props = {
 	activeKey: string
 	setActiveKey: Dispatch<SetStateAction<string>>
-	currentMinuteSecond: string
+	currentTime: Dayjs
 	list: TransData[]
 }
 
-const SECOND = 1000
-const MINUTE = SECOND * 60
-const HOUR = MINUTE * 60
+export const CollapseComponent: FC<Props> = ({ activeKey, setActiveKey, currentTime, list }) => {
+	const currentYMDHMS = currentTime.format('YYYY-MM-DD HH:mm:ss')
+	const currentMinuteSecond = currentTime.format('HH:mm:ss')
 
-const getRemainTimeString = (startTime: string, endTime: string) => {
-	const formatDate = (startTime < endTime ? dayjs() : dayjs().add(1, 'day')).format('YYYY-MM-DD')
-	const remainTime = new Date(`${formatDate} ${endTime}`).getTime() - Date.now()
-	const remainHour = remainTime / HOUR
-	const remainHourString = String(Math.floor(remainHour))
-	const remainMinute = (remainTime / MINUTE) % 60
-	const remainMinuteString = String(Math.floor(remainMinute))
-	const remainSecond = (remainTime / SECOND) % 60
-	const remainSecondString = String(Math.ceil(remainSecond))
-
-	return `${remainHourString === '0' ? '' : `${remainHourString}h`}${remainMinuteString === '0' ? '' : `${remainMinuteString}m`}${remainSecondString === '0' ? '' : `${remainSecondString}s`}`
-}
-
-export const CollapseComponent: FC<Props> = ({ activeKey, setActiveKey, currentMinuteSecond, list }) => {
 	return (
-		<Collapse accordion activeKey={activeKey} onChange={setActiveKey}>
+		<Collapse className={'w-full'} accordion activeKey={activeKey} onChange={setActiveKey}>
 			{list.map(e => {
 				const isActive = activeKey === e._id
 				const schedulesLength = e.schedules.length
@@ -45,26 +32,36 @@ export const CollapseComponent: FC<Props> = ({ activeKey, setActiveKey, currentM
 					}
 				}
 
-				return (
-					<Collapse.Item header={e.name} name={e._id} key={e._id}>
-						{e.schedules.map((f, j) => {
-							const isGreen = j % 2 === 0
-							const matchTime = j === firstMatchTimeIndex
+				return useMemo(
+					() => (
+						<Collapse.Item header={e.name} name={e._id} key={e._id} extra={isActive && <span>{currentYMDHMS}</span>}>
+							{e.schedules.map((f, j) => {
+								const isGreen = j % 2 === 0
+								const matchTime = j === firstMatchTimeIndex
+								const wrapClassName =
+									'flex items-center mb-1.5 max-[475px]:flex-col max-[475px]:items-start max-[475px]:mb-3 ' + (matchTime ? ` p-1 pr-2 -translate-x-1 ${isGreen ? 'bg-blue-100' : 'bg-green-100'}` : '')
+								const tagClassName =
+									'flex items-center w-[176px] pl-3 mr-2 rounded py-0.5 text-xs whitespace-nowrap max-[475px]:w-full ' +
+									(isGreen ? 'bg-blue-50 border border-blue-200' : 'bg-green-50 border border-green-200')
 
-							return (
-								<div key={f._id} className={'flex items-center mb-1.5' + (matchTime ? ` p-1 ${isGreen ? 'bg-blue-100' : 'bg-green-100'}` : '')}>
-									<span className={'flex items-center mr-2 rounded px-3 py-0.5 text-xs ' + (isGreen ? 'bg-blue-50 border border-blue-200' : 'bg-green-50 border border-green-200')}>
-										<span className={'w-2 h-2 mr-1 rounded-full border border-gray-400'} style={{ backgroundColor: f._color }} />
-										<span>
-											{f.startTime} ~ {f.endTime}
+								return (
+									<div key={f._id} className={wrapClassName}>
+										<span className={tagClassName}>
+											<span className={'w-2 h-2 mr-1 rounded-full border border-gray-400'} style={{ backgroundColor: f._color }} />
+											<span>
+												{f.startTime} ~ {f.endTime} -- {f._useTime}
+											</span>
 										</span>
-									</span>
-									<span>{f.name}</span>
-									{isActive && matchTime && <span className={'text-xs text-gray-600 ml-auto'}>剩下 {getRemainTimeString(f.startTime, f.endTime)}</span>}
-								</div>
-							)
-						})}
-					</Collapse.Item>
+										<div className={'flex-1 inline-flex items-center justify-between max-[475px]:w-full'}>
+											<span>{f.name}</span>
+											{isActive && matchTime && <span className={'text-xs text-gray-600 ml-auto'}>剩下 {getRemainTimeString(f.startTime, f.endTime)}</span>}
+										</div>
+									</div>
+								)
+							})}
+						</Collapse.Item>
+					),
+					[isActive ? currentYMDHMS : false],
 				)
 			})}
 		</Collapse>

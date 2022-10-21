@@ -7,6 +7,7 @@ export type Schedule = {
 export type TransSchedule = Schedule & {
 	_id: string
 	_color: string
+	_useTime: string
 }
 
 export type Data = {

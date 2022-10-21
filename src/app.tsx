@@ -1,10 +1,9 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { data, NEXT, PREV } from './data'
-import { Data, TransData } from './types'
-import { Button, Collapse } from '@arco-design/web-react'
+import { TransData } from './types'
 import dayjs from 'dayjs'
 import { CollapseComponent } from './components/collapse-component'
-import { CountdownTime } from './components/countdown-time'
+import { getUseTimeString } from './lib/data-helper'
 
 export const App = () => {
 	const [colors, setColors] = useState<string[]>([
@@ -40,8 +39,6 @@ export const App = () => {
 	const [list, setList] = useState<TransData[]>([])
 	const [activeKey, setActiveKey] = useState('0')
 	const [currentTime, setCurrentTime] = useState(dayjs)
-	const currentYMDHMS = currentTime.format('YYYY/MM/DD HH:mm:ss')
-	const currentMinuteSecond = currentTime.format('HH:mm:ss')
 
 	const transList = () => {
 		const newList = [] as TransData[]
@@ -78,13 +75,14 @@ export const App = () => {
 						...f,
 						_id: String(j),
 						_color: nameColors[f.name],
+						_useTime: getUseTimeString(startTime, endTime),
 						startTime,
 						endTime,
 					}
 				}),
 			})
 		})
-
+		console.log(newList)
 		setList(newList)
 	}
 
@@ -109,14 +107,8 @@ export const App = () => {
 	useEffect(bootstrap, [])
 
 	return (
-		<div className={'flex justify-center w-[1200px] mx-auto p-2'}>
-			<div className="w-1/2 pr-1">
-				<CollapseComponent list={list} activeKey={activeKey} setActiveKey={setActiveKey} currentMinuteSecond={currentMinuteSecond} />
-			</div>
-
-			<div className="w-1/2 pl-1">
-				<CountdownTime currentYMDHMS={currentYMDHMS} />
-			</div>
+		<div className={'flex justify-center w-[768px] max-w-full mx-auto p-4'}>
+			<CollapseComponent list={list} activeKey={activeKey} setActiveKey={setActiveKey} currentTime={currentTime} />
 		</div>
 	)
 }
