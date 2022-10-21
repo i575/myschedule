@@ -5,7 +5,12 @@ module.exports = {
 		"./src/**/*.{js,ts,jsx,tsx}",
 	],
 	theme: {
-		extend: {},
+		extend: {
+
+			colors: {
+				'arco_border': 'rgba(229,230,235)'
+			}
+		},
 	},
 	plugins: [],
 }

@@ -6,14 +6,16 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "predeploy": "pnpm run build && shx rm -rf node_modules/.cache/gh-pages",
     "deploy": "node deploy.cjs",
+    "delete_cache": "shx rm -rf node_modules/.cache/gh-pages",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@arco-design/web-react": "^2.40.2",
+    "dayjs": "^1.11.6",
+    "gh-pages": "^4.0.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "gh-pages": "^4.0.0"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@types/node": "^18.11.2",

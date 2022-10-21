@@ -1,4 +1,4 @@
-import React from 'react'
+import '@arco-design/web-react/dist/css/arco.css'
 import ReactDOM from 'react-dom/client'
 import { App } from './app'
 import './index.css'

@@ -1,3 +1,5 @@
+import { Data } from './types'
+
 const PREV = 'prev'
 const NEXT = 'next'
 
@@ -14,7 +16,7 @@ const names = {
 	bouldering: '抱石',
 }
 
-const data = [
+const data: Data[] = [
 	{
 		name: '平日',
 		schedules: [
