@@ -5,5 +5,7 @@ ghpages.publish(
 	{
 		repo: 'https://github.com/i575/myschedule.git',
 	},
-	err => console.log(err),
+	err => {
+		if (err) console.log(err)
+	},
 )
