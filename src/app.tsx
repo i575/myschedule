@@ -4,6 +4,7 @@ import { Data, TransData } from './types'
 import { Button, Collapse } from '@arco-design/web-react'
 import dayjs from 'dayjs'
 import { CollapseComponent } from './components/collapse-component'
+import { CountdownTime } from './components/countdown-time'
 
 export const App = () => {
 	const [colors, setColors] = useState<string[]>([
@@ -110,10 +111,11 @@ export const App = () => {
 	return (
 		<div className={'flex justify-center w-[1200px] mx-auto p-2'}>
 			<div className="w-1/2 pr-1">
-				<div className="text-xl h-[41px] flex items-center justify-center border border-arco_border rounded-tl rounded-tr">{currentYMDHMS}</div>
-			</div>
-			<div className="w-1/2 pl-1">
 				<CollapseComponent list={list} activeKey={activeKey} setActiveKey={setActiveKey} currentMinuteSecond={currentMinuteSecond} />
+			</div>
+
+			<div className="w-1/2 pl-1">
+				<CountdownTime currentYMDHMS={currentYMDHMS} />
 			</div>
 		</div>
 	)
