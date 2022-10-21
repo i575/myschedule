@@ -20,3 +20,10 @@ export type TransData = {
 	name: string
 	schedules: TransSchedule[]
 }
+
+export type ReportScheduleColor = string
+export type ReportScheduleName = string
+export type ReportScheduleHMS = string
+export type ReportNameColorUseTime = { [name: ReportScheduleName]: [ReportScheduleColor, number] }
+export type Report = [ReportScheduleName, ReportScheduleColor, ReportScheduleHMS]
+export type Reports = Report[][]

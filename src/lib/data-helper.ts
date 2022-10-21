@@ -4,7 +4,7 @@ const SECOND = 1000
 const MINUTE = SECOND * 60
 const HOUR = MINUTE * 60
 
-const _translateRemainHMS = (remainTimeMs: number, passZero = false) => {
+const translateRemainHMS = (remainTimeMs: number, passZero = false) => {
 	const remainHour = remainTimeMs / HOUR
 	const remainHourString = String(Math.floor(remainHour))
 	const remainMinute = (remainTimeMs / MINUTE) % 60
@@ -18,19 +18,21 @@ const _translateRemainHMS = (remainTimeMs: number, passZero = false) => {
 	return h + m + s
 }
 
-const getUseTimeString = (startTime: string, endTime: string, passZero = false) => {
+const getUseTime = (startTime: string, endTime: string, parsed = true, passZero = false): string | number => {
 	const todayYMD = dayjs().format('YYYY-MM-DD')
 	const YMD = startTime < endTime ? todayYMD : dayjs().add(1, 'day').format('YYYY-MM-DD')
 	const useTimeMs = new Date(`${YMD} ${endTime}`).getTime() - new Date(`${todayYMD} ${startTime}`).getTime()
 
-	return _translateRemainHMS(useTimeMs, passZero)
+	if (parsed) return translateRemainHMS(useTimeMs, passZero)
+	return useTimeMs
 }
 
-const getRemainTimeString = (startTime: string, endTime: string, passZero = false) => {
-	const YMD = (startTime < endTime ? dayjs() : dayjs().add(1, 'day')).format('YYYY-MM-DD')
+const getRemainTime = (startTime: string, endTime: string, parsed = true, passZero = false): string | number => {
+	const YMD = (startTime < endTime || startTime > dayjs().format('HH:mm') ? dayjs() : dayjs().add(1, 'day')).format('YYYY-MM-DD')
 	const remainTimeMs = new Date(`${YMD} ${endTime}`).getTime() - Date.now()
 
-	return _translateRemainHMS(remainTimeMs, passZero)
+	if (parsed) return translateRemainHMS(remainTimeMs, passZero)
+	return remainTimeMs
 }
 
-export { SECOND, MINUTE, HOUR, getUseTimeString, getRemainTimeString }
+export { SECOND, MINUTE, HOUR, getUseTime, getRemainTime, translateRemainHMS }

@@ -1,32 +1,41 @@
 import { Collapse } from '@arco-design/web-react'
 import { Dispatch, FC, SetStateAction, useMemo } from 'react'
-import { TransData } from '../types'
+import { Reports, TransData } from '../types'
 import { Dayjs } from 'dayjs'
-import { getRemainTimeString } from '../lib/data-helper'
+import { getRemainTime } from '../lib/data-helper'
 
 type Props = {
 	activeKey: string
 	setActiveKey: Dispatch<SetStateAction<string>>
 	currentTime: Dayjs
 	list: TransData[]
+	reports: Reports
 }
 
-export const CollapseComponent: FC<Props> = ({ activeKey, setActiveKey, currentTime, list }) => {
+const ColorDot: FC<{ color: string }> = ({ color }) => {
+	return <span className={'w-2 h-2 mr-1 rounded-full border border-gray-400'} style={{ backgroundColor: color }} />
+}
+
+export const CollapseComponent: FC<Props> = ({ activeKey, setActiveKey, currentTime, list, reports }) => {
 	const currentYMDHMS = currentTime.format('YYYY-MM-DD HH:mm:ss')
 	const currentMinuteSecond = currentTime.format('HH:mm:ss')
 
 	return (
 		<Collapse className={'w-full'} accordion activeKey={activeKey} onChange={setActiveKey}>
-			{list.map(e => {
+			{list.map((e, i) => {
 				const isActive = activeKey === e._id
 				const schedulesLength = e.schedules.length
 				let firstMatchTimeIndex = undefined as never as number
+				let firstMatchName = undefined as never as string
 
 				if (isActive) {
 					for (let i = schedulesLength - 1; i < schedulesLength; i--) {
+						if (i < 0) break
+
 						const f = e.schedules[i]
-						if (currentMinuteSecond >= f.startTime) {
+						if (i > 0 ? currentMinuteSecond >= f.startTime : currentMinuteSecond >= e.schedules[schedulesLength - 1].endTime) {
 							firstMatchTimeIndex = i
+							firstMatchName = f.name
 							break
 						}
 					}
@@ -35,6 +44,16 @@ export const CollapseComponent: FC<Props> = ({ activeKey, setActiveKey, currentT
 				return useMemo(
 					() => (
 						<Collapse.Item header={e.name} name={e._id} key={e._id} extra={isActive && <span>{currentYMDHMS}</span>}>
+							<div className="mb-3">
+								{reports[i].map(([name, color, hms], j) => (
+									<div key={j} className={'inline-flex items-center mr-4 mb-1'}>
+										<ColorDot color={color} />
+										<span className={firstMatchName === name ? (firstMatchTimeIndex % 2 === 0 ? 'text-blue-500' : 'text-green-500') : undefined}>
+											{name} {hms}
+										</span>
+									</div>
+								))}
+							</div>
 							{e.schedules.map((f, j) => {
 								const isGreen = j % 2 === 0
 								const matchTime = j === firstMatchTimeIndex
@@ -47,21 +66,21 @@ export const CollapseComponent: FC<Props> = ({ activeKey, setActiveKey, currentT
 								return (
 									<div key={f._id} className={wrapClassName}>
 										<span className={tagClassName}>
-											<span className={'w-2 h-2 mr-1 rounded-full border border-gray-400'} style={{ backgroundColor: f._color }} />
+											<ColorDot color={f._color} />
 											<span>
 												{f.startTime} ~ {f.endTime} -- {f._useTime}
 											</span>
 										</span>
 										<div className={'flex-1 inline-flex items-center justify-between max-[475px]:w-full'}>
 											<span>{f.name}</span>
-											{isActive && matchTime && <span className={'text-xs text-gray-600 ml-auto'}>剩下 {getRemainTimeString(f.startTime, f.endTime)}</span>}
+											{isActive && matchTime && <span className={'text-xs text-gray-600 ml-auto'}>剩下 {getRemainTime(f.startTime, f.endTime)}</span>}
 										</div>
 									</div>
 								)
 							})}
 						</Collapse.Item>
 					),
-					[isActive ? currentYMDHMS : false],
+					[reports, isActive ? currentYMDHMS : false],
 				)
 			})}
 		</Collapse>

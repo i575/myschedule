@@ -16,7 +16,38 @@ const names = {
 	bouldering: '抱石',
 }
 
-const data: Data[] = [
+const colors = [
+	'#FF8787',
+	'#F8C4B4',
+	'#E5EBB2',
+	'#BCE29E',
+	'#FAF7F0',
+	'#CDFCF6',
+	'#BCCEF8',
+	'#98A8F8',
+	'#FFD372',
+	'#FF99D7',
+	'#D58BDD',
+	'#905E96',
+	'#A1C298',
+	'#C6EBC5',
+	'#FBF2CF',
+	'#FA7070',
+	'#89CFFD',
+	'#FBDF07',
+	'#FF7F3F',
+	'#F94892',
+	'#B2A4FF',
+	'#FFB4B4',
+	'#FFDEB4',
+	'#FFF9CA',
+	'#F37878',
+	'#FAD9A1',
+	'#F9F9C5',
+	'#D9F8C4',
+]
+
+const schedules: Data[] = [
 	{
 		name: '平日',
 		schedules: [
@@ -67,4 +98,4 @@ const data: Data[] = [
 	},
 ]
 
-export { PREV, NEXT, data }
+export { PREV, NEXT, colors, schedules }

@@ -1,51 +1,43 @@
-import { useEffect, useState } from 'react'
-import { data, NEXT, PREV } from './data'
-import { TransData } from './types'
+import { useEffect, useMemo, useState } from 'react'
+import { colors, NEXT, PREV, schedules } from './schedules'
+import { ReportNameColorUseTime, Reports, TransData } from './types'
 import dayjs from 'dayjs'
 import { CollapseComponent } from './components/collapse-component'
-import { getUseTimeString } from './lib/data-helper'
+import { getUseTime, translateRemainHMS } from './lib/data-helper'
 
 export const App = () => {
-	const [colors, setColors] = useState<string[]>([
-		'#FF8787',
-		'#F8C4B4',
-		'#E5EBB2',
-		'#BCE29E',
-		'#FAF7F0',
-		'#CDFCF6',
-		'#BCCEF8',
-		'#98A8F8',
-		'#FFD372',
-		'#FF99D7',
-		'#D58BDD',
-		'#905E96',
-		'#A1C298',
-		'#C6EBC5',
-		'#FBF2CF',
-		'#FA7070',
-		'#89CFFD',
-		'#FBDF07',
-		'#FF7F3F',
-		'#F94892',
-		'#B2A4FF',
-		'#FFB4B4',
-		'#FFDEB4',
-		'#FFF9CA',
-		'#F37878',
-		'#FAD9A1',
-		'#F9F9C5',
-		'#D9F8C4',
-	])
 	const [list, setList] = useState<TransData[]>([])
 	const [activeKey, setActiveKey] = useState('0')
 	const [currentTime, setCurrentTime] = useState(dayjs)
+
+	const reports = useMemo<Reports>(() => {
+		if (list.length === 0) return []
+
+		const result = [] as ReportNameColorUseTime[]
+
+		list.forEach(e => {
+			const nameUseTime = {} as ReportNameColorUseTime
+
+			e.schedules.forEach(f => {
+				if (nameUseTime[f.name]) {
+					nameUseTime[f.name][1] += getUseTime(f.startTime, f.endTime, false) as number
+				} else {
+					nameUseTime[f.name] = [f._color, getUseTime(f.startTime, f.endTime, false) as number]
+				}
+			})
+
+			result.push(nameUseTime)
+		})
+
+		return result.map(e => Object.entries(e).map(([name, [color, timeMs]]) => [name, color, translateRemainHMS(timeMs)]))
+	}, [list])
 
 	const transList = () => {
 		const newList = [] as TransData[]
 		const nameColors = {} as { [name: string]: string }
 		let colorCurrent = 0
 
-		data.forEach(e => {
+		schedules.forEach(e => {
 			const { schedules } = e
 			schedules.forEach(f => {
 				if (nameColors[f.name]) return
@@ -54,7 +46,7 @@ export const App = () => {
 			})
 		})
 
-		data.forEach((e, i) => {
+		schedules.forEach((e, i) => {
 			newList.push({
 				_id: String(i),
 				name: e.name,
@@ -75,14 +67,14 @@ export const App = () => {
 						...f,
 						_id: String(j),
 						_color: nameColors[f.name],
-						_useTime: getUseTimeString(startTime, endTime),
+						_useTime: getUseTime(startTime, endTime) as string,
 						startTime,
 						endTime,
 					}
 				}),
 			})
 		})
-		console.log(newList)
+
 		setList(newList)
 	}
 
@@ -108,7 +100,7 @@ export const App = () => {
 
 	return (
 		<div className={'flex justify-center w-[768px] max-w-full mx-auto p-4'}>
-			<CollapseComponent list={list} activeKey={activeKey} setActiveKey={setActiveKey} currentTime={currentTime} />
+			<CollapseComponent list={list} reports={reports} activeKey={activeKey} setActiveKey={setActiveKey} currentTime={currentTime} />
 		</div>
 	)
 }
