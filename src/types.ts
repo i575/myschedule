@@ -2,6 +2,7 @@ export type Schedule = {
 	startTime: string
 	endTime: string
 	name: string
+	important?: boolean
 }
 
 export type TransSchedule = Schedule & {
@@ -24,6 +25,17 @@ export type TransData = {
 export type ReportScheduleColor = string
 export type ReportScheduleName = string
 export type ReportScheduleHMS = string
-export type ReportNameColorUseTime = { [name: ReportScheduleName]: [ReportScheduleColor, number] }
-export type Report = [ReportScheduleName, ReportScheduleColor, ReportScheduleHMS]
+export type ReportNameColorUseTime = {
+	[name: ReportScheduleName]: {
+		color: ReportScheduleColor
+		useTime: number
+		important: boolean
+	}
+}
+export type Report = {
+	name: ReportScheduleName
+	color: ReportScheduleColor
+	hms: ReportScheduleHMS
+	important: boolean
+}
 export type Reports = Report[][]

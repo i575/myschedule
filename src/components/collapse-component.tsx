@@ -45,10 +45,10 @@ export const CollapseComponent: FC<Props> = ({ activeKey, setActiveKey, currentT
 					() => (
 						<Collapse.Item header={e.name} name={e._id} key={e._id} extra={isActive && <span>{currentYMDHMS}</span>}>
 							<div className="mb-3">
-								{reports[i].map(([name, color, hms], j) => (
+								{reports[i].map(({ name, color, hms, important }, j) => (
 									<div key={j} className={'inline-flex items-center mr-4 mb-1'}>
 										<ColorDot color={color} />
-										<span className={firstMatchName === name ? (firstMatchTimeIndex % 2 === 0 ? 'text-blue-500' : 'text-green-500') : undefined}>
+										<span className={firstMatchName === name ? (firstMatchTimeIndex % 2 === 0 ? 'text-blue-500' : 'text-green-500') : important ? 'text-purple-600' : undefined}>
 											{name} {hms}
 										</span>
 									</div>
@@ -72,7 +72,7 @@ export const CollapseComponent: FC<Props> = ({ activeKey, setActiveKey, currentT
 											</span>
 										</span>
 										<div className={'flex-1 inline-flex items-center justify-between max-[475px]:w-full'}>
-											<span>{f.name}</span>
+											<span className={f.important ? 'text-purple-600' : undefined}>{f.name}</span>
 											{isActive && matchTime && <span className={'text-xs text-gray-600 ml-auto'}>剩下 {getRemainTime(f.startTime, f.endTime)}</span>}
 										</div>
 									</div>

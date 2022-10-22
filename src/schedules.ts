@@ -14,6 +14,7 @@ const names = {
 	happyTime: '娛樂時光',
 	fitness: '健身、劈腿',
 	bouldering: '抱石',
+	eat: '用餐',
 }
 
 const colors = [
@@ -49,7 +50,7 @@ const colors = [
 
 const schedules: Data[] = [
 	{
-		name: '平日',
+		name: '工作日',
 		schedules: [
 			{ startTime: '00:15', endTime: NEXT, name: names.sleep },
 			{ startTime: '06:30', endTime: NEXT, name: names.wakeup },
@@ -59,14 +60,14 @@ const schedules: Data[] = [
 			{ startTime: '12:00', endTime: NEXT, name: names.swingHands },
 			{ startTime: '12:30', endTime: NEXT, name: names.meditation },
 			{ startTime: '13:00', endTime: NEXT, name: names.work },
-			{ startTime: '18:00', endTime: NEXT, name: names.happyTime },
-			{ startTime: '20:30', endTime: NEXT, name: names.english },
-			{ startTime: '22:00', endTime: NEXT, name: names.code },
+			{ startTime: '19:00', endTime: NEXT, name: names.eat },
+			{ startTime: '20:15', endTime: NEXT, name: names.code },
+			{ startTime: '21:15', endTime: NEXT, name: names.english },
 			{ startTime: '23:15', endTime: NEXT, name: names.fitness },
 		],
 	},
 	{
-		name: '假日(抱石)',
+		name: '非工作日(抱石)',
 		schedules: [
 			{ startTime: '00:15', endTime: NEXT, name: names.sleep },
 			{ startTime: '06:30', endTime: NEXT, name: names.wakeup },
@@ -74,26 +75,24 @@ const schedules: Data[] = [
 			{ startTime: '09:15', endTime: NEXT, name: names.swingHands },
 			{ startTime: '09:45', endTime: NEXT, name: names.meditation },
 			{ startTime: '10:15', endTime: NEXT, name: names.bouldering },
-			{ startTime: '16:00', endTime: NEXT, name: names.english },
-			{ startTime: '17:30', endTime: NEXT, name: names.happyTime },
-			{ startTime: '20:00', endTime: NEXT, name: names.english },
-			{ startTime: '21:00', endTime: NEXT, name: names.code },
-			{ startTime: '22:30', endTime: NEXT, name: names.fitness },
+			{ startTime: '17:30', endTime: NEXT, name: names.eat },
+			{ startTime: '19:00', endTime: NEXT, name: names.code },
+			{ startTime: '21:00', endTime: NEXT, name: names.english },
+			{ startTime: '23:15', endTime: NEXT, name: names.fitness },
 		],
 	},
 	{
-		name: '假日(無抱石)',
+		name: '非工作日(無抱石)',
 		schedules: [
 			{ startTime: '00:15', endTime: NEXT, name: names.sleep },
 			{ startTime: '06:30', endTime: NEXT, name: names.wakeup },
 			{ startTime: '07:00', endTime: NEXT, name: names.code },
 			{ startTime: '12:00', endTime: NEXT, name: names.swingHands },
 			{ startTime: '12:30', endTime: NEXT, name: names.meditation },
-			{ startTime: '13:00', endTime: NEXT, name: names.english },
-			{ startTime: '17:00', endTime: NEXT, name: names.happyTime },
-			{ startTime: '20:00', endTime: NEXT, name: names.english },
-			{ startTime: '21:00', endTime: NEXT, name: names.code },
-			{ startTime: '22:30', endTime: NEXT, name: names.fitness },
+			{ startTime: '13:00', endTime: NEXT, name: names.code },
+			{ startTime: '17:30', endTime: NEXT, name: names.eat },
+			{ startTime: '19:00', endTime: NEXT, name: names.english },
+			{ startTime: '23:15', endTime: NEXT, name: names.fitness },
 		],
 	},
 ]

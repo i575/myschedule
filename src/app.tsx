@@ -1,13 +1,15 @@
-import { useEffect, useMemo, useState } from 'react'
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react'
 import { colors, NEXT, PREV, schedules } from './schedules'
 import { ReportNameColorUseTime, Reports, TransData } from './types'
 import dayjs from 'dayjs'
 import { CollapseComponent } from './components/collapse-component'
 import { getUseTime, translateRemainHMS } from './lib/data-helper'
 
+const ACTIVE_KEY_STORAGE_NAME = 'i575_myschedule_active_key'
+
 export const App = () => {
 	const [list, setList] = useState<TransData[]>([])
-	const [activeKey, setActiveKey] = useState('0')
+	const [activeKey, setActiveKey] = useState(() => localStorage.getItem(ACTIVE_KEY_STORAGE_NAME) || '0')
 	const [currentTime, setCurrentTime] = useState(dayjs)
 
 	const reports = useMemo<Reports>(() => {
@@ -20,17 +22,41 @@ export const App = () => {
 
 			e.schedules.forEach(f => {
 				if (nameUseTime[f.name]) {
-					nameUseTime[f.name][1] += getUseTime(f.startTime, f.endTime, false) as number
+					nameUseTime[f.name].useTime += getUseTime(f.startTime, f.endTime, false) as number
 				} else {
-					nameUseTime[f.name] = [f._color, getUseTime(f.startTime, f.endTime, false) as number]
+					nameUseTime[f.name] = {
+						color: f._color,
+						useTime: getUseTime(f.startTime, f.endTime, false) as number,
+						important: f.important || false,
+					}
 				}
 			})
 
 			result.push(nameUseTime)
 		})
 
-		return result.map(e => Object.entries(e).map(([name, [color, timeMs]]) => [name, color, translateRemainHMS(timeMs)]))
+		return result.map(e =>
+			Object.entries(e).map(([name, { color, useTime, important }]) => ({
+				name,
+				color,
+				hms: translateRemainHMS(useTime),
+				important,
+			})),
+		)
 	}, [list])
+
+	const updateActiveKey = (action: SetStateAction<string>) => {
+		if (typeof action === 'function') {
+			setActiveKey(v => {
+				const newActiveKey = action(v)
+				localStorage.setItem(ACTIVE_KEY_STORAGE_NAME, newActiveKey)
+				return newActiveKey
+			})
+		} else {
+			setActiveKey(action)
+			localStorage.setItem(ACTIVE_KEY_STORAGE_NAME, action)
+		}
+	}
 
 	const transList = () => {
 		const newList = [] as TransData[]
@@ -100,7 +126,7 @@ export const App = () => {
 
 	return (
 		<div className={'flex justify-center w-[768px] max-w-full mx-auto p-4'}>
-			<CollapseComponent list={list} reports={reports} activeKey={activeKey} setActiveKey={setActiveKey} currentTime={currentTime} />
+			<CollapseComponent list={list} reports={reports} activeKey={activeKey} setActiveKey={updateActiveKey} currentTime={currentTime} />
 		</div>
 	)
 }
